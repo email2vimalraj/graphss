@@ -49,7 +49,7 @@ func runServer(configFilePath string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%+v\n", server)
+	fmt.Printf("%+v\n", server.Cfg)
 
 	return nil
 }
