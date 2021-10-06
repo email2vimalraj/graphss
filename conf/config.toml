@@ -1,0 +1,9 @@
+[http]
+addr = "localhost"
+certfile = ""
+keyfile = ""
+port = "8070"
+protocol = "http"
+
+[paths]
+logs-dir = "./logs"
