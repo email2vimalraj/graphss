@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/email2vimalraj/graphss/pkg/config"
+	"github.com/email2vimalraj/graphss/pkg/http"
 )
 
 var (
@@ -45,10 +45,11 @@ func Run() int {
 }
 
 func runServer(configFilePath string) error {
-	cfg, err := config.NewCfg(configFilePath)
+	server, err := http.InitializeServer(configFilePath)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%+v\n", cfg)
+	fmt.Printf("%+v\n", server)
+
 	return nil
 }

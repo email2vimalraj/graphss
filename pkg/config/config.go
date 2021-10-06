@@ -19,16 +19,16 @@ type Cfg struct {
 	} `toml:"paths"`
 }
 
-func NewCfg(configFile string) (*Cfg, error) {
+func NewCfg(configFilePath string) (*Cfg, error) {
 	cfg := &Cfg{}
-	if err := cfg.loadConfiguration(configFile); err != nil {
+	if err := cfg.loadConfiguration(configFilePath); err != nil {
 		return nil, err
 	}
 	return cfg, nil
 }
 
-func (c *Cfg) loadConfiguration(configFile string) error {
-	_, err := toml.DecodeFile(configFile, &c)
+func (c *Cfg) loadConfiguration(configFilePath string) error {
+	_, err := toml.DecodeFile(configFilePath, &c)
 	if err != nil {
 		return err
 	}
