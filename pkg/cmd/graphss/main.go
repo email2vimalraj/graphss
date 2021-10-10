@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
+	"strings"
 
+	"github.com/email2vimalraj/graphss/pkg/domains"
 	"github.com/email2vimalraj/graphss/pkg/http"
 )
 
@@ -14,12 +18,21 @@ var (
 )
 
 func main() {
-	os.Exit(Run())
+	domains.Version = strings.TrimPrefix(version, "")
+	domains.Commit = commit
+
+	// // Setup signal handlers.
+	// ctx, cancel := context.WithCancel(context.Background())
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c, os.Interrupt)
+	// go func() { <-c; cancel() }()
+
+	os.Exit(run())
 }
 
 var serverFlagSet = flag.NewFlagSet("server", flag.ContinueOnError)
 
-func Run() int {
+func run() int {
 	var (
 		configFilePath = serverFlagSet.String("config", "", "path to the configuration file")
 		// pidFilePath    = serverFlagSet.String("pidfile", "", "path to the pid file")
@@ -45,11 +58,25 @@ func Run() int {
 }
 
 func runServer(configFilePath string) error {
+	// Setup signal handlers.
+	ctx, cancel := context.WithCancel(context.Background())
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() { <-c; cancel() }()
+
+	// Initialize the server.
 	server, err := http.InitializeServer(configFilePath)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("%+v\n", server.Cfg)
+
+	if err := server.Open(); err != nil {
+		return err
+	}
+
+	// Wait for CTRL-C.
+	<-ctx.Done()
 
 	return nil
 }
